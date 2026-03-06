@@ -10,7 +10,11 @@ export const useDashboardData = () => {
         getCarts(),
         getUsers(),
       ]);
-      return { products, carts, users };
+      const totalRevenue = carts.reduce((acc, cart) => acc + cart.total, 0);
+      const totalOrders = carts.length;
+      const activeCustomers = new Set(carts.map(cart => cart.userId)).size;
+
+      return { products, carts, users, totalRevenue, totalOrders, activeCustomers };
     },
   });
 };
