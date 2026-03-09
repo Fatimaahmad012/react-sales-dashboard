@@ -2,12 +2,12 @@ import React from 'react';
 import { useDashboardData } from '../api/hooks/useDashboardData';
 import StatCard from '../components/cards/StatCard';
 import DashboardChart from '../components/charts/DashboardChart';
-import { prepareChartData } from '../api/hooks/LineChartHelpers';
+import { prepareChartData } from '../utils/LineChartHelpers';
 import LineChart from '../components/charts/LineChart';
 import BarChart from '../components/charts/BarChart';
-import { prepareCategoryData } from '../api/hooks/barCharHelper';
+import { prepareCategoryData } from '../utils/barCharHelper';
 import SalesTable from '../components/table/SalesTables';
-import { prepareTableData } from '../hooks/tableHelpers';
+import { prepareTableData } from '../utils/tableHelpers';
 const Dashboard = () => {
   const { data, isLoading, isError } = useDashboardData();
 
