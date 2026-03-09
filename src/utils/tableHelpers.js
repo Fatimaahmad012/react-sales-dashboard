@@ -1,5 +1,6 @@
 export const prepareTableData = (users, carts) => {
   return users.map((user) => {
+    
     const userCarts = carts.filter((cart) => cart.userId === user.id);
     
     const totalOrders = userCarts.length;
