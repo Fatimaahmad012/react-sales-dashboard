@@ -6,7 +6,8 @@ import { prepareChartData } from '../api/hooks/LineChartHelpers';
 import LineChart from '../components/charts/LineChart';
 import BarChart from '../components/charts/BarChart';
 import { prepareCategoryData } from '../api/hooks/barCharHelper';
-ß
+import SalesTable from '../components/table/SalesTables';
+import { prepareTableData } from '../hooks/tableHelpers';
 const Dashboard = () => {
   const { data, isLoading, isError } = useDashboardData();
 
@@ -14,6 +15,7 @@ const Dashboard = () => {
   if (isError) return <div className="p-10 text-red-500">Error!</div>;
     const revenueChartData = prepareChartData(data.carts);
     const categoryChartData = prepareCategoryData(data.products);
+    const tableData = prepareTableData(data.users, data.carts);
   return (
     <div className="min-h-screen bg-gray-100 p-10">
       <h1 className="text-3xl font-bold mb-6">Sales Performance Dashboard</h1>
@@ -44,11 +46,11 @@ const Dashboard = () => {
 
        
 
-      <div className="bg-white p-6 rounded shadow">
-        <h2 className="text-xl font-bold mb-4">Sales Representatives</h2>
-        <p className="text-gray-400">Data table placeholder...</p>
-      </div>
-    </div>
+     <div className="bg-white p-6 rounded shadow mt-10">
+    <h2 className="text-xl font-bold mb-4">Sales Representatives</h2>
+    <SalesTable data={tableData} />
+  </div>
+  </div>
   );
 };
 
