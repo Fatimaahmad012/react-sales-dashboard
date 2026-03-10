@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useDashboardData } from '../api/hooks/useDashboardData';
 import StatCard from '../components/cards/StatCard';
 import DashboardChart from '../components/charts/DashboardChart';
-import { prepareChartData } from '../utils/LineChartHelpers';
+import { prepareChartData } from '../utils/lineChartHelpers';
 import LineChart from '../components/charts/LineChart';
 import BarChart from '../components/charts/BarChart';
 import { prepareCategoryData } from '../utils/barCharHelper';
