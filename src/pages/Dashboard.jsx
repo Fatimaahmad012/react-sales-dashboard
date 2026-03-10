@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useDashboardData } from '../api/hooks/useDashboardData';
 import StatCard from '../components/cards/StatCard';
 import DashboardChart from '../components/charts/DashboardChart';
@@ -18,13 +18,45 @@ const Dashboard = () => {
     endDate: ''
   });
 
-  
+  const { data, isLoading, isError, isFetching } = useDashboardData();
+  const filteredData = useMemo(() => {
+    if (!data) return { carts: [], products: [], users: [], totalRevenue: 0, totalOrders: 0, activeCustomers: 0 };
 
-  const { data, isLoading, isError, isFetching } = useDashboardData(filters);
+    const allProducts = data.products || [];
+    const allCarts = data.carts || [];
+    const allUsers = data.users || [];
+
+    const startDate = filters.startDate ? new Date(filters.startDate) : null;
+    const endDate = filters.endDate ? new Date(filters.endDate) : null;
+
+    const filteredProducts = allProducts.filter(product => {
+      const matchesCategory = !filters.category || product.category === filters.category;
+      const productDate = product.meta && product.meta.createdAt ? new Date(product.meta.createdAt) : null;
+      const matchesStart = !startDate || (productDate && productDate >= startDate);
+      const matchesEnd = !endDate || (productDate && productDate <= endDate);
+      return matchesCategory && matchesStart && matchesEnd;
+    });
+
+    const productIds = new Set(filteredProducts.map(p => p.id));
+    const filteredCarts = allCarts.filter(cart => 
+      cart.products && cart.products.some(cartItem => productIds.has(cartItem.id))
+    );
+
+    const totalRevenue = filteredCarts.reduce((acc, cart) => acc + (cart.total || 0), 0);
+    const totalOrders = filteredCarts.length;
+    const activeCustomers = new Set(filteredCarts.map(cart => cart.userId)).size;
+
+    return {
+      products: filteredProducts,
+      carts: filteredCarts,
+      users: allUsers,
+      totalRevenue,
+      totalOrders,
+      activeCustomers,
+    };
+  }, [data, filters]);
 
   if (isError) return <div className="p-10 text-red-500">Error loading dashboard data.</div>;
-
-  // Show skeletons / spinner while initial load is happening
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-100 px-4 sm:px-10 py-10">
@@ -64,8 +96,8 @@ const Dashboard = () => {
       </div>
     );
   }
-  // safe defaults now that loading finished
-  const safeData = data || { carts: [], products: [], users: [], totalRevenue: 0, totalOrders: 0, activeCustomers: 0 };
+
+  const safeData = filteredData;
   const revenueChartData = prepareChartData(safeData.carts);
   const categoryChartData = prepareCategoryData(safeData.products);
 
@@ -93,11 +125,6 @@ const Dashboard = () => {
             <option value="mens-watches">Men Watches</option>
             <option value="mens-shoes">Men Shoes</option>
             </select>
-            {isFetching && (
-              <div className="flex-shrink-0">
-                <Spinner size={1.5} />
-              </div>
-            )}
           </div>
           
           <div className="flex items-center gap-2 flex-wrap min-w-0">
@@ -118,9 +145,9 @@ const Dashboard = () => {
       
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <StatCard title="Total Revenue" value={`$${data.totalRevenue.toLocaleString()}`} />
-        <StatCard title="Total Orders" value={data.totalOrders} />
-        <StatCard title="Active Customers" value={data.activeCustomers} />
+        <StatCard title="Total Revenue" value={`$${safeData.totalRevenue.toLocaleString()}`} />
+        <StatCard title="Total Orders" value={safeData.totalOrders} />
+        <StatCard title="Active Customers" value={safeData.activeCustomers} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
