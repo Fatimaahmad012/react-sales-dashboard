@@ -6,11 +6,17 @@ const LineChart = ({ data }) => {
       {data.map((point, i) => {
         const pct = Math.round((point.value / maxVal) * 100);
         const inside = pct >= 18; // threshold to render value inside bar
+        const fmt = (v) => new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(v);
+        const shortK = (v) => {
+          if (!v) return '$0';
+          if (Math.abs(v) >= 1000) return `$${Math.round(v / 1000)}k`;
+          return fmt(v);
+        };
 
         return (
           <div key={i} className="group relative flex-1 flex flex-col items-center h-full justify-end">
             <div className="absolute -top-12 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-800 text-white text-xs rounded-lg py-2 px-3 shadow-xl z-10 whitespace-nowrap mb-2">
-              ${point.value.toLocaleString()}
+              {fmt(point.value)}
               <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-800 rotate-45"></div>
             </div>
 
@@ -23,11 +29,11 @@ const LineChart = ({ data }) => {
             >
               {inside ? (
                 <span className="absolute top-2 left-3 text-sm font-bold text-white truncate">
-                  {point.value > 0 ? `$${Math.round(point.value / 1000)}k` : ''}
+                  {point.value > 0 ? shortK(point.value) : ''}
                 </span>
               ) : (
                 <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-blue-700">
-                  {point.value > 0 ? `$${Math.round(point.value / 1000)}k` : ''}
+                  {point.value > 0 ? shortK(point.value) : ''}
                 </span>
               )}
             </div>
