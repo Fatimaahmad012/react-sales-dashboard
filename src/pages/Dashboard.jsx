@@ -33,9 +33,9 @@ const Dashboard = () => {
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
         <h1 className="text-3xl font-bold">Sales Performance Dashboard</h1>
         
-        <div className="flex gap-3 bg-white p-3 rounded shadow-sm border border-gray-200">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-white p-3 rounded shadow-sm border border-gray-200">
           <select 
-            className="border p-2 rounded text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            className="border p-2 rounded text-sm focus:ring-2 focus:ring-blue-500 outline-none w-full sm:w-auto min-w-0"
             value={filters.category}
             onChange={(e) => setFilters({ ...filters, category: e.target.value })}
           >
@@ -49,17 +49,17 @@ const Dashboard = () => {
             <option value="mens-shoes">Men Shoes</option>
           </select>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap min-w-0">
             <input 
               type="date" 
-              className="border p-2 rounded text-sm"
+              className="border p-2 rounded text-sm w-full sm:w-auto"
               value={filters.startDate}
               onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
             />
             <span className="text-gray-400">to</span>
             <input 
               type="date" 
-              className="border p-2 rounded text-sm"
+              className="border p-2 rounded text-sm w-full sm:w-auto"
               value={filters.endDate}
               onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
             />
