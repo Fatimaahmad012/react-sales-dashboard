@@ -1,32 +1,85 @@
-# React + Vite
+# Sales Dashboard (React + Vite)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This repository is a small sales dashboard demo built with React and Vite. It demonstrates a simple component structure, data fetching with TanStack Query, and lightweight charts and tables.
 
-Currently, two official plugins are available:
+## Setup Instructions
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Prerequisites:
+- Node.js 18+ recommended
 
-## React Compiler
+Install and run locally:
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+```bash
+npm install
+npm run dev           # start dev server (vite)
+npm run build         # build for production
+npm run preview       # preview production build
+```
 
-## Expanding the ESLint configuration
+Linting and tests:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm run lint
+npm test              # run unit tests (vitest)
+```
 
-### Architecture
-Components: Reusable UI (Cards, Tables) and Chart wrappers.
-Hooks: Custom useDashboardData managing API states via TanStack Query.
-Utils: Pure JS for data merging (Joins) and formatting.
-Services: Axios-based API calls.
+If you want to run tests in watch mode:
 
-### State Management
-Server State: TanStack Query handles caching, loading, and error states for API data.
-Local State: useState manages UI filters (Category, Dates).
-Optimization: useMemo prevents expensive re-calculations of table and chart data on re-renders.
+```bash
+npx vitest --watch
+```
 
-### Key Assumptions
-Active Reps: Only users with linked carts data are displayed in the table (Filtered out 0 revenue users).
-Date Filtering: Uses Product meta.createdAt since Carts lack a detailed date history in the mock API.
-Data Join: Maps userId from Carts to User id to calculate individual performance.
+## Project Architecture
+
+- `src/components` — Reusable UI components. Subfolders: `cards`, `charts`, `table`.
+- `src/pages` — Page-level components (Dashboard).
+- `src/api` — Network layer (`services`) and React Query hooks (`hooks`).
+- `src/utils` — Pure helpers for preparing chart and table data.
+- `public` — Static assets.
+
+Notable files:
+- `src/pages/Dashboard.jsx` — Main page wiring: filters, stat cards, charts, and table.
+- `src/api/hooks/useDashboardData.js` — Encapsulates data fetching and filtering logic using TanStack Query.
+- `src/components/charts/*` — Small custom chart components used for visualization.
+
+## State Management Approach
+
+- Server state is managed with **TanStack Query** (`@tanstack/react-query`). This provides caching, background refetching, and loading/error flags per query.
+- UI/local state (filter values for `category`, `startDate`, `endDate`) is handled with React's `useState` within the `Dashboard` page.
+- Derived data (chart payloads, table rows) are produced with pure helper functions in `src/utils` and are computed after the query data resolves.
+- Optimizations: the code avoids accessing `data` before the query finishes, and expensive computations should be memoized with `useMemo` where appropriate.
+
+## Assumptions
+
+- The demo uses the DummyJSON public API endpoints(`/products`, `/carts`, `/users`). Responses are shaped as expected by the existing service wrappers in `src/api/services`.
+- Date filtering currently uses product metadata (e.g., `product.meta.createdAt`) because the demo data's carts may not contain detailed timestamps for every item. If you have real cart timestamps, update `prepareChartData` to bucket by cart date instead.
+- The dashboard filters are client-side and applied on the fetched dataset.
+
+## Running Unit Tests
+
+This project uses `vitest` for unit tests.
+
+Run all tests:
+
+```bash
+npm test
+```
+
+Run a specific test file or in watch mode:
+
+```bash
+npx vitest src/components/charts/LineChart.test.jsx --run
+npx vitest --watch
+```
+
+If tests fail in CI or locally, ensure network access to the dummy API is available, or mock network responses in the test setup (see `setupTests.js`).
+
+## Notes / Next Steps
+
+- Consider adding `useMemo` around heavy derived data computations if you see re-render performance issues.
+- For production usage replace the dummy API with a stable backend and secure the API calls.
+- Add Error Boundaries around top-level routes to better capture UI errors and provide user-friendly fallbacks.
+
+---
+
+If you want, I can expand this README with architecture diagrams or a quick checklist for deploying the app.
