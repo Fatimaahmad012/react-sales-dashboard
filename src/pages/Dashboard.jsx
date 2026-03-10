@@ -29,7 +29,7 @@ const Dashboard = () => {
   const tableData = prepareTableData(data.users, data.carts).filter(rep => rep.orders > 0);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-10">
+    <div className="min-h-screen bg-gray-100 px-4 sm:px-10 py-10">
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
         <h1 className="text-3xl font-bold">Sales Performance Dashboard</h1>
         
