@@ -8,6 +8,7 @@ import BarChart from '../components/charts/BarChart';
 import { prepareCategoryData } from '../utils/barCharHelper';
 import SalesTable from '../components/table/SalesTables';
 import { prepareTableData } from '../utils/tableHelpers';
+import DateInput from '../components/DateInput';
 
 const Dashboard = () => {
   const [filters, setFilters] = useState({
@@ -15,6 +16,8 @@ const Dashboard = () => {
     startDate: '',
     endDate: ''
   });
+
+  
 
   const { data, isLoading, isError } = useDashboardData(filters);
 
@@ -35,7 +38,8 @@ const Dashboard = () => {
         
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-white p-3 rounded shadow-sm border border-gray-200">
           <select 
-            className="border p-2 rounded text-sm focus:ring-2 focus:ring-blue-500 outline-none w-full sm:w-auto min-w-0"
+            aria-label="Category filter"
+            className="border border-gray-300 bg-white px-3 py-2 rounded text-sm focus:ring-2 focus:ring-blue-500 outline-none w-full sm:w-auto min-w-0 shadow-sm"
             value={filters.category}
             onChange={(e) => setFilters({ ...filters, category: e.target.value })}
           >
@@ -50,16 +54,14 @@ const Dashboard = () => {
           </select>
           
           <div className="flex items-center gap-2 flex-wrap min-w-0">
-            <input 
-              type="date" 
-              className="border p-2 rounded text-sm w-full sm:w-auto"
+            <DateInput
+              ariaLabel="Start date"
               value={filters.startDate}
               onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
             />
             <span className="text-gray-400">to</span>
-            <input 
-              type="date" 
-              className="border p-2 rounded text-sm w-full sm:w-auto"
+            <DateInput
+              ariaLabel="End date"
               value={filters.endDate}
               onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
             />
